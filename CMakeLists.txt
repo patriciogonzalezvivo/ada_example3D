@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_compile_options(-DGLM_FORCE_CXX14 -DGLM_FORCE_SWIZZLE -Wno-psabi)
+add_compile_options(-DGLM_FORCE_CXX14 -DEVENTS_AS_CALLBACKS -DGLM_FORCE_SWIZZLE -Wno-psabi)
 
 # The compiled ADA 
 add_subdirectory(deps)

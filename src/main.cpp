@@ -3,80 +3,120 @@
 #include "ada/gl/meshes.h"
 #include "ada/gl/shader.h"
 #include "ada/shaders/defaultShaders.h"
-#include "ada/tools/text.h"
-#include "ada/tools/geom.h"
+#include "ada/scene/light.h"
+#include "ada/scene/camera.h"
+
+#include <iostream>
 
 using namespace std;
 using namespace ada;
 using namespace glm;
 
 class myApp : public App {
-    Vbo*   billboard;
-    Shader shader;
+    Vbo*    geom;
+    Shader  shader;
+
+    Light   light;
+    Camera  cam;
+    float   lat = 180.0f;
+    float   lon = 0.0f;
 
     void setup() {
+        shader.load(getDefaultSrc(FRAG_DEFAULT_SCENE), 
+                    getDefaultSrc(VERT_DEFAULT_SCENE));
 
-        billboard = rectMesh(0.0,0.0,1.0,1.0).getVbo();
+        geom = cubeMesh(1.0f).getVbo();
 
-        string frag = R"(
-        #ifdef GL_ES
-        precision mediump float;
-        #endif
+        cam.setViewport(width, height);
+        cam.setPosition( vec3(0.0f, 0.0f, -10.0f) );
+        cam.lookAt( glm::vec3(0.0f, 0.0f, 0.0f) );
+        
+        light.setPosition( vec3(1.0f,1.0f,1.0f) );
 
-        uniform vec2    u_resolution;
-        uniform float   u_time;
-
-        void main(void) {
-            vec3 color = vec3(1.0);
-            vec2 st = gl_FragCoord.xy/u_resolution.xy;
-
-            color = vec3(st.x,st.y,abs(sin(u_time)));
-            
-            gl_FragColor = vec4(color, 1.0);
-        }
-        )";
-
-        shader.load(frag, getDefaultSrc(VERT_DEFAULT) );
-
-        blendMode(BLEND_ALPHA);
+        camera(true);
     }
 
     void draw() {
-        float width = getWindowWidth();
-        float height = getWindowHeight();
-        float time = getTime();
-
         clear(0.0f);
 
+        glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+
         shader.use();
+        shader.setUniform("u_modelViewProjectionMatrix", cam.getProjectionViewMatrix() );
+        shader.setUniform("u_projectionMatrix", cam.getProjectionMatrix());
+        shader.setUniform("u_normalMatrix", cam.getNormalMatrix());
+        shader.setUniform("u_viewMatrix", cam.getViewMatrix() );
+
+        shader.setUniform("u_camera", -cam.getPosition() );
+        shader.setUniform("u_cameraDistance", cam.getDistance());
+        shader.setUniform("u_cameraNearClip", cam.getNearClip());
+        shader.setUniform("u_cameraFarClip", cam.getFarClip());
+        shader.setUniform("u_cameraEv100", cam.getEv100());
+        shader.setUniform("u_cameraExposure", cam.getExposure());
+        shader.setUniform("u_cameraAperture", cam.getAperture());
+        shader.setUniform("u_cameraShutterSpeed", cam.getShutterSpeed());
+        shader.setUniform("u_cameraSensitivity", cam.getSensitivity());
+        shader.setUniform("u_cameraChange", cam.bChange);
+        shader.setUniform("u_iblLuminance", 30000.0f * cam.getExposure());
+
+        // shader.setUniform("u_lightMatrix", light.getBiasMVPMatrix() );
+        // shader.setUniformDepthTexture("u_lightShadowMap", light.getShadowMap(), .shader.textureIndex++ );
+        if (light.getType() != LIGHT_DIRECTIONAL)
+            shader.setUniform("u_light", light.getPosition());
+        if (light.getType() == LIGHT_DIRECTIONAL || light.getType() == LIGHT_SPOT)
+            shader.setUniform("u_lightDirection", light.direction);
+        if (light.falloff > 0)
+            shader.setUniform("u_lightFalloff", light.falloff);
+        shader.setUniform("u_lightIntensity", light.intensity);
+        shader.setUniform("u_lightColor", light.color);
+
         shader.setUniform("u_resolution", width, height );
         shader.setUniform("u_time", time);
-        shader.setUniform("u_modelViewProjectionMatrix", mat4(1.0f));
-        billboard->render( &shader );
+        geom->render( &shader );
 
-        fill( 0.0f );
-        textAlign(ALIGN_CENTER);
-        textSize(28.0f);
-        text("Hello World", width * 0.5f, height * 0.5f);
-        
-        vector<vec2> pts;
-        for (size_t i = 0; i < 100; i++) 
-            pts.push_back(vec2( getWindowWidth() * ( 0.25f + i * 0.005f ), 
-                                getWindowHeight() * ( 0.25f + cos( i * .031415f + time) * 0.125f ) ));
+    }
 
-        noStroke();
-        fill( 0.0f );
-        rect(pts[0], vec2(20.0f) );
+    void mouseDragged() {
+        float x = mouseX;
+        float y = mouseY;
 
-        stroke( 0.0f );
-        line(pts);
-        
-        fill( 1.0f );
-        pointSize(10.0f);
-        pointShape(X_SHAPE);
-        simplify(pts);
-        points(pts);
+        if (x <= 0) x = width;
+        else if (x > width) x = 0; 
 
+        if (y <= 0) y = height - 2;
+        else if (y >= height) y = 2;
+
+        if (x != mouseX || y != mouseY) 
+            setMousePosition(x, y);
+    
+        if (mouseButton == 1) {
+            // Left-button drag is used to rotate geometry.
+            float dist = cam.getDistance();
+
+            float vel_x = movedX;
+            float vel_y = movedY;
+
+            if (fabs(vel_x) < 50.0 && fabs(vel_y) < 50.0) {
+                lat -= vel_x;
+                lon -= vel_y * 0.5;
+                cam.orbit(lat, lon, dist);
+                cam.lookAt(glm::vec3(0.0));
+            }
+        } 
+        else {
+            // Right-button drag is used to zoom geometry.
+            float dist = cam.getDistance();
+            dist += (-.008f * movedY);
+            if (dist > 0.0f) {
+                cam.orbit(lat, lon, dist);
+                cam.lookAt(glm::vec3(0.0));
+            }
+        }
+    }
+
+    void onViewportResize(int _newWidth, int _newHeight) {
+        cam.setViewport(_newWidth, _newHeight);
     }
 
 };
