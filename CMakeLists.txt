@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(hello_world LANGUAGES CXX)
+project(hello_3d_world LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -15,11 +15,11 @@ file(GLOB ROOT_SOURCE
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
 )
 
-add_executable(hello_world
+add_executable(hello_3d_world
     ${ROOT_SOURCE}
 )
 
-set_target_properties(hello_world PROPERTIES
+set_target_properties(hello_3d_world PROPERTIES
     CXX_STANDARD 14
     CXX_STANDARD_REQUIRED ON
 )
@@ -29,8 +29,8 @@ file(COPY   assets/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
 
 if (EMSCRIPTEN)
 
-    # create a hello_world.html 
-    # set_target_properties(hello_world PROPERTIES SUFFIX ".html")
+    # create a hello_3d_world.html 
+    # set_target_properties(hello_3d_world PROPERTIES SUFFIX ".html")
 
     # copy the index.html 
     file(COPY   assets/wasm/index.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
@@ -49,11 +49,11 @@ if (EMSCRIPTEN)
 
     # set(LFLAGS "${LFLAGS} --preload-file file_in_assets_folder")
     
-    set_target_properties(hello_world PROPERTIES LINK_FLAGS "${LFLAGS}")
-    target_link_libraries(hello_world PRIVATE ada glfw )
+    set_target_properties(hello_3d_world PROPERTIES LINK_FLAGS "${LFLAGS}")
+    target_link_libraries(hello_3d_world PRIVATE ada glfw )
     
 else()
-    target_link_libraries(hello_world PRIVATE ada)
+    target_link_libraries(hello_3d_world PRIVATE ada)
 
 endif()
 
