@@ -18,6 +18,7 @@ class myApp : public App {
     Texture world_texture;
 
     Vbo     satellite;
+    vector<vec3> orbit;
 
     Light   sun;
 
@@ -63,7 +64,7 @@ class myApp : public App {
         
         world_texture.load( "earth-water.png" );
 
-        CameraPtr myCamera = createCamera();
+        Camera* myCamera = createCamera();
         myCamera->setPosition( vec3(0.0f, 0.0f, -3.0f) );
         myCamera->lookAt( vec3(0.0f, 0.0f, 0.0f) );
         
@@ -92,9 +93,16 @@ class myApp : public App {
         rotateX(frameCount * 0.005f);
         translate(0.0f,0.0f,1.2f);
 
-        fill(0.5f + sin(millis() * 0.005f) * 0.5f, 0.0f, 0.0f);
+        fill(0.75f + sin(millis() * 0.005f) * 0.25f, 0.0f, 0.0f);
         model( satellite );
+
+        vec4 o = getWorldMatrix() * vec4(1.f, 0.0f, 0.0f, 0.0f);
+        orbit.push_back( vec3(o.x, o.y, o.z) );
         pop();
+
+        fill(1.0);
+        pointSize(10.0);
+        points(orbit);
 
     }
 
