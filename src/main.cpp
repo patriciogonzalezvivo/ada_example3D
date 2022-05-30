@@ -19,7 +19,7 @@ class myApp : public App {
 
     Vbo     satellite;
 
-    Light   myLight;
+    Light   sun;
 
     void setup() {
 
@@ -29,6 +29,11 @@ class myApp : public App {
             #endif
 
             uniform sampler2D   u_tex0;
+            uniform vec3        u_light;
+
+            #ifdef MODEL_VERTEX_NORMAL
+            varying vec3        v_normal;
+            #endif
 
             #ifdef MODEL_VERTEX_TEXCOORD
             varying vec2        v_texcoord;
@@ -36,9 +41,16 @@ class myApp : public App {
 
             void main () {
                 vec3 color = vec3(1.);
-                
+
                 #ifdef MODEL_VERTEX_TEXCOORD
                 color = vec3( 0.5 + texture2D(u_tex0, v_texcoord).r * 0.5);
+                #endif
+                
+                #ifdef MODEL_VERTEX_NORMAL
+                float shade = dot(v_normal, normalize(u_light));
+                shade = smoothstep(-0.25, 0.25, shade);
+                color *= 0.2 + shade * 0.8;
+                // color = normalize(u_light);
                 #endif
 
                 gl_FragColor = vec4(color, 1.);
@@ -55,15 +67,18 @@ class myApp : public App {
         myCamera->setPosition( vec3(0.0f, 0.0f, -3.0f) );
         myCamera->lookAt( vec3(0.0f, 0.0f, 0.0f) );
         
-        myLight.setPosition( vec3(1.0f,1.0f,1.0f) );
+        sun.setPosition( vec3(1.0f,1.0f,1.0f) );
+        sun.setType(LIGHT_POINT);
 
-        addLight(myLight);
+        addLight(sun);
         background(0.0);
     }
 
     void draw() {
 
         orbitControl();
+
+        sun.setPosition( vec3(cos(frameCount * 0.01f), 0.0, sin(frameCount * 0.01f)) );
 
         push();
         rotateY(frameCount * 0.0025f);
@@ -76,7 +91,8 @@ class myApp : public App {
         rotateY(frameCount * 0.005f);
         rotateX(frameCount * 0.005f);
         translate(0.0f,0.0f,1.2f);
-        fill(1.0f, 0.0f, 0.0f);
+
+        fill(0.5f + sin(millis() * 0.005f) * 0.5f, 0.0f, 0.0f);
         model( satellite );
         pop();
 
