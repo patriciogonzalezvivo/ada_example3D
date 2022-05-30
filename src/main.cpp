@@ -14,17 +14,42 @@ using namespace glm;
 class myApp : public App {
     Vbo     myVbo;
     Shader  myShader;
+    Texture myTexture;
 
     Light   myLight;
     Camera  myCamera;
 
     void setup() {
-        myShader = createShader(FRAG_DEFAULT_SCENE, VERT_DEFAULT_SCENE);
 
-        myVbo.load( cubeMesh(1.0f) );
+        string frag = R"(
+            #ifdef GL_ES
+            precision mediump float;
+            #endif
+
+            uniform sampler2D   u_tex0;
+
+            #ifdef MODEL_VERTEX_TEXCOORD
+            varying vec2        v_texcoord;
+            #endif
+
+            void main () {
+                vec3 color = vec3(1.);
+                
+                #ifdef MODEL_VERTEX_TEXCOORD
+                color = vec3( 0.5 + texture2D(u_tex0, v_texcoord).r * 0.5);
+                #endif
+
+                gl_FragColor = vec4(color, 1.);
+            }
+        )";
+
+        myShader = createShader(frag);
+        myVbo.load( sphereMesh() );
+        
+        myTexture.load( "earth-water.png" );
 
         myCamera.setViewport(width, height);
-        myCamera.setPosition( vec3(0.0f, 0.0f, -10.0f) );
+        myCamera.setPosition( vec3(0.0f, 0.0f, -3.0f) );
         myCamera.lookAt( glm::vec3(0.0f, 0.0f, 0.0f) );
         
         myLight.setPosition( vec3(1.0f,1.0f,1.0f) );
@@ -37,8 +62,12 @@ class myApp : public App {
         clear(0.0f);
 
         orbitControl();
+        push();
+        rotateY(frameCount * 0.005f);
         shader(myShader);
+        texture(myTexture);
         model( myVbo );
+        pop();
 
     }
 
