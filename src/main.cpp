@@ -12,12 +12,14 @@ using namespace ada;
 using namespace glm;
 
 class myApp : public App {
-    Vbo     myVbo;
-    Shader  myShader;
-    Texture myTexture;
+    
+    Vbo     world;
+    Shader  world_shader;
+    Texture world_texture;
+
+    Vbo     satellite;
 
     Light   myLight;
-    Camera  myCamera;
 
     void setup() {
 
@@ -43,30 +45,39 @@ class myApp : public App {
             }
         )";
 
-        myShader = createShader(frag);
-        myVbo.load( sphereMesh() );
+        world_shader = createShader(frag);
+        world.load( sphereMesh() );
+        satellite.load( boxMesh(0.1f, 0.1f, 0.1f) );
         
-        myTexture.load( "earth-water.png" );
+        world_texture.load( "earth-water.png" );
 
-        myCamera.setViewport(width, height);
-        myCamera.setPosition( vec3(0.0f, 0.0f, -3.0f) );
-        myCamera.lookAt( glm::vec3(0.0f, 0.0f, 0.0f) );
+        CameraPtr myCamera = createCamera();
+        myCamera->setPosition( vec3(0.0f, 0.0f, -3.0f) );
+        myCamera->lookAt( vec3(0.0f, 0.0f, 0.0f) );
         
         myLight.setPosition( vec3(1.0f,1.0f,1.0f) );
 
-        setCamera(myCamera);
         addLight(myLight);
+        background(0.0);
     }
 
     void draw() {
-        clear(0.0f);
 
         orbitControl();
+
+        push();
+        rotateY(frameCount * 0.0025f);
+        shader(world_shader);
+        texture(world_texture);
+        model( world );
+        pop();
+
         push();
         rotateY(frameCount * 0.005f);
-        shader(myShader);
-        texture(myTexture);
-        model( myVbo );
+        rotateX(frameCount * 0.005f);
+        translate(0.0f,0.0f,1.2f);
+        fill(1.0f, 0.0f, 0.0f);
+        model( satellite );
         pop();
 
     }
