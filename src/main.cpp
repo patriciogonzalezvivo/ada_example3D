@@ -18,6 +18,7 @@ class myApp : public App {
     Texture world_texture;
 
     Vbo     satellite;
+    vec3    satellite_pos;
     vector<vec3> orbit;
 
     Light   sun;
@@ -60,17 +61,22 @@ class myApp : public App {
 
         world_shader = createShader(frag);
         world.load( sphereMesh() );
-        satellite.load( boxMesh(0.1f, 0.1f, 0.1f) );
+
+        satellite.load( boxMesh(0.075f, 0.075f, 0.075f) );
+        addLablel("Satellite", &satellite_pos);
         
         world_texture.load( "earth-water.png" );
 
         Camera* myCamera = createCamera();
         myCamera->setPosition( vec3(0.0f, 0.0f, -3.0f) );
         myCamera->lookAt( vec3(0.0f, 0.0f, 0.0f) );
+
         sun.setPosition( vec3(1.0f,1.0f,1.0f) );
         sun.setType(LIGHT_POINT);
         addLight(sun);
+
         background(0.0);
+        blendMode(BLEND_ALPHA);
     }
 
     void draw() {
@@ -86,21 +92,31 @@ class myApp : public App {
         pop();
 
         push();
-        rotateY(frameCount * 0.005f);
+        rotateY(frameCount * 0.0035f);
         rotateX(frameCount * 0.005f);
         translate(0.0f,0.0f,1.2f);
         fill(0.75f + sin(millis() * 0.005f) * 0.25f, 0.0f, 0.0f);
         model( satellite );
-        // vec4 o = getWorldMatrix() * vec4(1.f, 0.0f, 0.0f, 0.0f);
-        // orbit.push_back( vec3(o.x, o.y, o.z) );
+        satellite_pos = ( getWorldMatrix() * vec4(0.0f, 0.0f, 1.2f, 0.0f) ).xyz;
         pop();
 
-        // fill(1.0);
-        // pointSize(10.0);
-        // points(orbit);
+        if (frameCount%15 == 0) {
+            orbit.push_back( satellite_pos );
+            if (orbit.size() > 500)
+                orbit.erase(orbit.begin());
+        }
+    
+        strokeWeight(1.0);
+        stroke(0.75f, 0.0f, 0.0f);
+        line(orbit);
 
+        fill(1.0f);
+        labels();
+
+        textAlign(ALIGN_CENTER);
+        textSize(28.0f);
+        text("Hello World", width * 0.5f, height * 0.5f);
     }
-
 };
 
 myApp       app;
