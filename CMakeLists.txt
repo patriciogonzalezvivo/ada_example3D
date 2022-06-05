@@ -30,13 +30,14 @@ file(COPY   assets/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
 if (EMSCRIPTEN)
 
     # create a hello_3d_world.html 
-    # set_target_properties(hello_3d_world PROPERTIES SUFFIX ".html")
+    set_target_properties(hello_3d_world PROPERTIES SUFFIX ".html")
 
     # copy the index.html 
     file(COPY   assets/wasm/index.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
     file(COPY   assets/wasm/thumbnail.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
 
-    set(LFLAGS "${LFLAGS} -pthread")
+    # set(LFLAGS "${LFLAGS} -pthread")
+    set(LFLAGS "${LFLAGS} -s USE_PTHREADS=0")
     set(LFLAGS "${LFLAGS} -s WASM=1")
     set(LFLAGS "${LFLAGS} -s USE_GLFW=3")
     # set(LFLAGS "${LFLAGS} -s FULL_ES2=1")
@@ -44,10 +45,10 @@ if (EMSCRIPTEN)
     # set(LFLAGS "${LFLAGS} -s MIN_WEBGL_VERSION=2")
     set(LFLAGS "${LFLAGS} -s MAX_WEBGL_VERSION=2")
     # set(LFLAGS "${LFLAGS} -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1")
-    # set(LFLAGS "${LFLAGS} -s ALLOW_MEMORY_GROWTH=1")
+    set(LFLAGS "${LFLAGS} -s ALLOW_MEMORY_GROWTH=1")
     set(LFLAGS "${LFLAGS} -s NO_DYNAMIC_EXECUTION=1")
 
-    # set(LFLAGS "${LFLAGS} --preload-file file_in_assets_folder")
+    set(LFLAGS "${LFLAGS} --preload-file earth-water.png")
     
     set_target_properties(hello_3d_world PROPERTIES LINK_FLAGS "${LFLAGS}")
     target_link_libraries(hello_3d_world PRIVATE ada glfw )

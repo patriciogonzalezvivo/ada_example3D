@@ -1,11 +1,5 @@
 #include "ada/app.h"
-
 #include "ada/geom/meshes.h"
-#include "ada/shaders/defaultShaders.h"
-
-#include "ada/scene/light.h"
-
-#include <iostream>
 
 using namespace std;
 using namespace ada;
@@ -69,12 +63,13 @@ class myApp : public App {
         world_texture.load( "earth-water.png" );
 
         cam = createCamera();
-        cam->setPosition( vec3(0.0f, 0.0f, -3.0f) );
+        cam->setPosition( vec3(0.0f, 0.0f, -4.0f) );
         cam->lookAt( vec3(0.0f, 0.0f, 0.0f) );
 
         sun.setPosition( vec3(1.0f,1.0f,1.0f) );
         sun.setType(LIGHT_POINT);
         addLight(sun);
+        lights();
 
         background(0.0);
         blendMode(BLEND_ALPHA);
@@ -118,6 +113,7 @@ class myApp : public App {
         textAlign(ALIGN_CENTER);
         textAlign(ALIGN_BOTTOM);
         textSize(28.0f);
+        fill(1.0f);
         text("Hello World", width * 0.5f, height * 0.5f);
     }
 };
@@ -126,24 +122,14 @@ myApp       app;
 
 int main(int argc, char **argv) {
     // Set the size and type of window
-    ivec4 window_viewport = ivec4(0);
-    window_viewport.z = 512;
-    window_viewport.w = 512;
-
+    ivec4 window_viewport = ivec4(0,0,512,512);
     #if defined(DRIVER_BROADCOM) || defined(DRIVER_GBM) 
     // RASPBERRYPI default windows size (fullscreen)
     ivec2 screen = getScreenSize();
-    window_viewport.z = screen.x;
-    window_viewport.w = screen.y;
+    window_viewport = ivec4(0, 0, screen.x, screen.y);
     #endif
-
-    WindowProperties window_properties;
-    window_properties.msaa = 4;
-    window_properties.major = 2.0;
-    window_properties.minor = 0.0;
 
     // Initialize openGL context
     app.run(window_viewport);
-
     return 1;
 }

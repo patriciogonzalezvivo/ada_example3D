@@ -1,3 +1,5 @@
+![](thumbnail.png)
+
 This is a "Hello World" program using [ADA](https://github.com/patriciogonzalezvivo/ada).
 
 Please visit [ADA](https://github.com/patriciogonzalezvivo/ada) repository for more information on how to compile.
@@ -87,31 +89,31 @@ cd ..
 ### For windows managers like MacOS, Windows or Linux (with X11 Window Manager) (all through GLFW) 
 
 ```bash
-git clone https://github.com/patriciogonzalezvivo/ada_example.git
+git clone https://github.com/patriciogonzalezvivo/ada_example3d.git
 cd ada_test
 mkdir build
 cd build
 cmake ..
 make
-./hello_world
+./hello_3d_world
 ```
 
 ### For Linux with no X11 Window Manager
 
 ```bash
-git clone https://github.com/patriciogonzalezvivo/ada_example.git
+git clone https://github.com/patriciogonzalezvivo/ada_example3d.git
 cd ada_test
 mkdir build
 cd build
 cmake -DNO_X11=TRUE ..
 make
-./hello_world
+./hello_3d_world
 ```
 
 ### As a Emscripten WebAssembly project
 
 ```bash
-git clone https://github.com/patriciogonzalezvivo/ada_example.git
+git clone https://github.com/patriciogonzalezvivo/ada_example3d.git
 cd ada_test
 mkdir build
 cd build
