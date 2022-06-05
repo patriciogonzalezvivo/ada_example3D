@@ -22,6 +22,7 @@ class myApp : public App {
     vector<vec3> orbit;
 
     Light   sun;
+    Camera* cam; 
 
     void setup() {
 
@@ -63,13 +64,13 @@ class myApp : public App {
         world.load( sphereMesh() );
 
         satellite.load( boxMesh(0.075f, 0.075f, 0.075f) );
-        addLablel("Satellite", &satellite_pos);
+        addLablel("Hi!", &satellite_pos);
         
         world_texture.load( "earth-water.png" );
 
-        Camera* myCamera = createCamera();
-        myCamera->setPosition( vec3(0.0f, 0.0f, -3.0f) );
-        myCamera->lookAt( vec3(0.0f, 0.0f, 0.0f) );
+        cam = createCamera();
+        cam->setPosition( vec3(0.0f, 0.0f, -3.0f) );
+        cam->lookAt( vec3(0.0f, 0.0f, 0.0f) );
 
         sun.setPosition( vec3(1.0f,1.0f,1.0f) );
         sun.setType(LIGHT_POINT);
@@ -80,6 +81,7 @@ class myApp : public App {
     }
 
     void draw() {
+        setCamera(cam);
         orbitControl();
 
         sun.setPosition( vec3(cos(frameCount * 0.01f), 0.0, sin(frameCount * 0.01f)) );
@@ -114,6 +116,7 @@ class myApp : public App {
         labels();
 
         textAlign(ALIGN_CENTER);
+        textAlign(ALIGN_BOTTOM);
         textSize(28.0f);
         text("Hello World", width * 0.5f, height * 0.5f);
     }
