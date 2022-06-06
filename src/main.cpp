@@ -94,7 +94,7 @@ class myApp : public App {
         translate(0.0f,0.0f,1.2f);
         fill(0.75f + sin(millis() * 0.005f) * 0.25f, 0.0f, 0.0f);
         model( satellite );
-        satellite_pos = ( getWorldMatrix() * vec4(0.0f, 0.0f, 1.2f, 0.0f) ).xyz;
+        satellite_pos = vec3( getWorldMatrix() * vec4(0.0f, 0.0f, 1.2f, 0.0f) );
         pop();
 
         if (frameCount%15 == 0) {
