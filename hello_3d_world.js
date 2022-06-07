@@ -195,7 +195,7 @@ var Module = typeof Module != 'undefined' ? Module : {};
     }
 
     }
-    loadPackage({"files": [{"filename": "/earth-water.png", "start": 0, "end": 117691}], "remote_package_size": 117691, "package_uuid": "3818eae5-04c5-45c1-b235-5fc40bb6569a"});
+    loadPackage({"files": [{"filename": "/earth-water.png", "start": 0, "end": 117691}], "remote_package_size": 117691, "package_uuid": "8cef8f47-ba66-4b84-88a3-0a1b941bfe34"});
 
   })();
 
