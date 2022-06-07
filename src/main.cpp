@@ -58,13 +58,13 @@ class myApp : public App {
         world.load( sphereMesh() );
 
         satellite.load( boxMesh(0.075f, 0.075f, 0.075f) );
-        addLablel("Hi!", &satellite_pos);
+        addLabel( [](Label* _label){ return toString(getFps(), 1); }, &satellite_pos );
         
         world_texture.load( "earth-water.png" );
 
         cam = createCamera();
         cam->setPosition( vec3(0.0f, 0.0f, -4.0f) );
-        cam->lookAt( vec3(0.0f, 0.0f, 0.0f) );
+        cam->lookAt( vec3(0.0f, 0.1f, 0.0f) );
 
         sun.setPosition( vec3(1.0f,1.0f,1.0f) );
         sun.setType(LIGHT_POINT);
