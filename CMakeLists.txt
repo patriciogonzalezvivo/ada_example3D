@@ -34,6 +34,7 @@ if (EMSCRIPTEN)
 
     # copy the index.html 
     file(COPY   assets/wasm/index.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
+    file(COPY   assets/wasm/fullscreen.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
     file(COPY   assets/wasm/thumbnail.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
 
     # set(LFLAGS "${LFLAGS} -pthread")
