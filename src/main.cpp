@@ -16,7 +16,7 @@ class myApp : public App {
     vector<vec3> orbit;
 
     Light   sun;
-    Camera* cam; 
+    Camera  cam; 
 
     void setup() {
 
@@ -62,9 +62,9 @@ class myApp : public App {
         
         world_texture.load( "earth-water.png" );
 
-        cam = createCamera();
-        cam->setPosition( vec3(0.0f, 0.0f, -4.0f) );
-        cam->lookAt( vec3(0.0f, 0.1f, 0.0f) );
+        setCamera(cam);
+        cam.setPosition( vec3(0.0f, 0.0f, -4.0f) );
+        cam.lookAt( vec3(0.0f, 0.1f, 0.0f) );
 
         sun.setPosition( vec3(1.0f,1.0f,1.0f) );
         sun.setType(LIGHT_POINT);
@@ -76,7 +76,6 @@ class myApp : public App {
     }
 
     void draw() {
-        setCamera(cam);
         orbitControl();
 
         sun.setPosition( vec3(cos(frameCount * 0.01f), 0.0, sin(frameCount * 0.01f)) );
