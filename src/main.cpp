@@ -58,7 +58,7 @@ class myApp : public App {
         world.load( sphereMesh() );
 
         satellite.load( boxMesh(0.075f, 0.075f, 0.075f) );
-        addLabel( [](Label* _label){ return toString(getFps(), 1); }, &satellite_pos );
+        addLabel( [](){ return toString(getFps(), 1); }, &satellite_pos );
         
         world_texture.load( "earth-water.png" );
 
