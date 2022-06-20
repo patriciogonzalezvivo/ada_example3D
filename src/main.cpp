@@ -58,7 +58,7 @@ class myApp : public App {
         world.load( sphereMesh() );
 
         satellite.load( boxMesh(0.075f, 0.075f, 0.075f) );
-        addLabel( [](){ return toString(getFps(), 1); }, &satellite_pos );
+        addLabel( [](){ return toString(getFps(), 1); }, &satellite_pos, LABEL_LINE_TO_WINDOW_BORDER, 10.0 );
         
         world_texture.load( "earth-water.png" );
 
@@ -107,28 +107,20 @@ class myApp : public App {
         line(orbit);
 
         fill(1.0f);
+        stroke(0.5f);
         labels();
 
         textAlign(ALIGN_CENTER);
         textAlign(ALIGN_BOTTOM);
         textSize(28.0f);
         fill(1.0f);
-        text("Hello World", width * 0.5f, height * 0.5f);
+        text("Hello World", width * 0.5f, height - 50.0f);
     }
 };
 
 myApp       app;
 
 int main(int argc, char **argv) {
-    // Set the size and type of window
-    ivec4 window_viewport = ivec4(0,0,512,512);
-    #if defined(DRIVER_BROADCOM) || defined(DRIVER_GBM) 
-    // RASPBERRYPI default windows size (fullscreen)
-    ivec2 screen = getScreenSize();
-    window_viewport = ivec4(0, 0, screen.x, screen.y);
-    #endif
-
-    // Initialize openGL context
-    app.run(window_viewport);
+    app.run();
     return 1;
 }
